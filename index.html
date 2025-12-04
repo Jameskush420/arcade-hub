@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spin Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1 class="title">🎰 Spin Master</h1>
+
+    <div class="balance">Coins: <span id="coins">1000</span></div>
+
+    <div class="slot-box">
+        <div id="r1" class="reel">🍒</div>
+        <div id="r2" class="reel">🍋</div>
+        <div id="r3" class="reel">🍇</div>
+    </div>
+
+    <button class="spin-btn" onclick="spin()">SPIN</button>
+
+    <div class="message" id="result"></div>
+
+</div>
+
+<audio id="spin-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0b614e775e.mp3?filename=slot-machine-109307.mp3"></audio>
+<audio id="win-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_30dba612e2.mp3?filename=success-1-6297.mp3"></audio>
+
+<script src="game.js"></script>
+</body>
+</html>
