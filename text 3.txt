@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="tl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Scatter Casino — Demo</title>
+  <meta name="description" content="Scatter Casino — demo slot & games UI. Walang totoong pera.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <svg width="40" height="40" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2L15 8l6 .5-4.5 3 1.5 6L12 15l-6 3.5L7 12 2.5 9.5 8 9l4-7z" fill="currentColor"/>
+      </svg>
+      <h1>Scatter Casino</h1>
+    </div>
+    <div class="user-info" aria-live="polite">
+      <div>Credits: <strong id="credits">1000</strong></div>
+      <button id="addCredits" class="btn small">+ Add Demo Credits</button>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="game-panel" aria-label="Slot machine demo">
+      <div class="controls">
+        <label for="bet">Bet:</label>
+        <input id="bet" type="number" min="1" step="1" value="50" aria-label="Bet amount">
+        <button id="spin" class="btn big">Spin</button>
+      </div>
+
+      <div class="slot" role="region" aria-label="Slot reels">
+        <div class="reel" id="reel1" aria-hidden="false"></div>
+        <div class="reel" id="reel2" aria-hidden="false"></div>
+        <div class="reel" id="reel3" aria-hidden="false"></div>
+      </div>
+
+      <div class="message" id="message" role="status" aria-live="polite">Good luck!</div>
+
+      <div class="paytable">
+        <h2>Paytable (demo)</h2>
+        <ul>
+          <li>3 Scatter symbols → 10× bet</li>
+          <li>2 Scatter symbols → 2× bet</li>
+          <li>Any single JACKPOT symbol → 5× bet</li>
+        </ul>
+      </div>
+    </section>
+
+    <aside class="sidebar">
+      <h3>Today's Promotions</h3>
+      <p class="muted">Demo-only offers: mga bonus credits bawat session.</p>
+
+      <h3>How to play</h3>
+      <ol>
+        <li>I-set ang bet.</li>
+        <li>Pindutin ang <strong>Spin</strong>.</li>
+        <li>Manalo ng demo credits kapag may scatter / jackpot.</li>
+      </ol>
+
+      <footer class="legal">
+        <small>Note: Ito ay demo lamang. Walang totoong pera, wal
+
+ang wagering o payout sa totoong buhay.</small>
+      </footer>
+    </aside>
+  </main>
+
+  <footer class="site-footer">
+    <div>© <span id="year"></span> Scatter Casino (Demo)</div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
