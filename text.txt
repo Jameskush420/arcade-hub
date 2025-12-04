@@ -1,0 +1,143 @@
+// Simple demo slot logic (no real money). Keeps state in session only.
+
+const symbols = [
+  { id: '🍒', name: 'Cherry' },
+  { id: '🔔', name: 'Bell' },
+  { id: '7️⃣', name: 'Seven' },
+  { id: '⭐', name: 'Star' },
+  { id: 'SCAT', name: 'Scatter' }, // scatter symbol
+  { id: 'JACK', name: 'Jackpot' }  // jackpot symbol
+];
+
+let credits = 1000;
+const creditsEl = document.getElementById('credits');
+const yearEl = document.getElementById('year');
+const spinBtn = document.getElementById('spin');
+const betEl = document.getElementById('bet');
+const messageEl = document.getElementById('message');
+const reels = [
+  document.getElementById('reel1'),
+  document.getElementById('reel2'),
+  document.getElementById('reel3')
+];
+const addCreditsBtn = document.getElementById('addCredits');
+
+function updateUI(){
+  creditsEl.textContent = credits;
+  yearEl.textContent = new Date().getFullYear();
+}
+updateUI();
+
+function randomSymbol(){
+  // weighted random: make scatter rarer and jackpot rarer
+  const weights = [18, 15, 8, 12, 5, 2]; // sum 60 approx
+  const sum = weights.reduce((a,b)=>a+b,0);
+  let r = Math.floor(Math.random()*sum);
+  for(let i=0;i<weights.length;i++){
+    r -= weights[i];
+    if(r < 0) return symbols[i];
+  }
+  return symbols[0];
+}
+
+function setReelVisual(reelEl, symbolObj){
+  reelEl.textContent = symbolObj.id;
+  reelEl.setAttribute('data-name', symbolObj.name);
+}
+
+function spinOnce(){
+  const bet = Math.max(1, Math.floor(Number(betEl.value) || 1));
+  if(bet > credits){
+    messageEl.textContent = "Wala kang sapat na credits para sa bet na 'yan.";
+    return;
+  }
+
+  // disable while "spinning"
+  spinBtn.disabled = true;
+  messageEl.textContent = "Spinning...";
+  // small animation sequence
+  reels.forEach(r => r.classList.remove('win'));
+
+  // simulate reel spin with timeouts
+  const results = [];
+  const spinDurations = [600, 900, 1200];
+  for(let i=0;i<3;i++){
+    // interim fast-changing symbols
+    let start = Date.now();
+    const interval = setInterval(()=>{
+      setReelVisual(reels[i], symbols[Math.floor(Math.random()*symbols.length)]);
+    }, 80);
+
+    setTimeout(()=>{
+      clearInterval(interval);
+      const sym = randomSymbol();
+      setReelVisual(reels[i], sym);
+      results[i] = sym;
+      // add small highlight when reel stops
+      reels[i].animate([{transform:'translateY(0) scale(1)'},{transform:'translateY(-6px) scale(1.02)'},{transform:'translateY(0) scale(1)'}], {duration:300, easing:'ease-out'});
+      if(i===2) finalizeSpin(bet, results);
+    }, spinDurations[i]);
+  }
+}
+
+function finalizeSpin(bet, results){
+  // evaluate scatter and jackpot
+  const scatterCount = results.filter(s => s.id === 'SCAT').length;
+  const jackpotCount = results.filter(s => s.id === 'JACK').length;
+
+  let payout = 0;
+  let msg = '';
+
+  if(scatterCount === 3){
+    payout = bet * 10;
+    msg = `🎉 3 SCATTER! Nanalo ka ng ${payout} credits!`;
+    reels.forEach(r=>r.classList.add('win'));
+  } else if(scatterCount === 2){
+    payout = bet * 2;
+    msg = `Nice — 2 Scatter: +${payout} credits`;
+    reels.filter((r,i)=>results[i].id==='SCAT').forEach(r=>r.classList.add('win'));
+  } else if(jackpotCount >= 1){
+    payout = bet * 5;
+    msg = `🔥 Jackpot symbol! Nanalo ka ng ${payout} credits`;
+    reels.filter((r,i)=>results[i].id==='JACK').forEach(r=>r.classList.add('win'));
+  } else {
+    // small random minor wins: if three same non-scatter symbols
+    if(results[0].id === results[1].id && results[1].id === results[2].id){
+      payout = bet * 3;
+      msg = `Triplet! Nanalo ka ng ${payout} credits`;
+      reels.forEach(r=>r.classList.add('win'));
+    } else {
+      payout = 0;
+      msg = `Wala... -${bet} credits`;
+    }
+  }
+
+  credits = credits - bet + payout;
+  if(credits < 0) credits = 0;
+
+  // animate winning reels
+  if(payout > 0){
+    messageEl.textContent = msg;
+  } else {
+    messageEl.textContent = msg;
+  }
+
+  updateUI();
+  spinBtn.disabled = false;
+}
+
+spinBtn.addEventListener('click', spinOnce);
+
+addCreditsBtn.addEventListener('click', ()=>{
+  credits += 500;
+  messageEl.textContent = "500 demo credits idinagdag.";
+  updateUI();
+});
+
+// accessibility: allow Enter on bet field to trigger spin
+betEl.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter'){ spinOnce(); }
+});
+
+// initialize sample visuals
+reels.forEach(r => setReelVisual(r, symbols[Math.floor(Math.random()*symbols.length)]));
